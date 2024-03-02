@@ -25,7 +25,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/api.software-project.in/api/user", authRouter);
+app.use("/software-project.in/user", authRouter);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Software project is listening on port ${process.env.PORT || 3000}`);
