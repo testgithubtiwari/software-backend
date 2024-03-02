@@ -1,26 +1,31 @@
 const express = require('express');
-const bodyparser=require('body-parser');
+const bodyParser = require('body-parser');
 const app = express();
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const morgan=require('morgan');
+const morgan = require('morgan');
 const cors = require("cors");
+
 dotenv.config();
 
-const mongoURI = process.env.MONGODB_URI;  
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+const uri = "mongodb+srv://admin:85%40Rt*56@software1.gptczdh.mongodb.net/softwaredb?retryWrites=true&w=majority&appName=software1";
+mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
   .then(() => {
-    console.log('MongoDB connected');
-    app.listen(process.env.PORT || 3000, () => console.log(`Software project is listening on port ${process.env.PORT}`));
+    console.log('Connection successful');
   })
-  .catch(err => console.error('MongoDB connection error:', err));
-const authRouter=require('./routes/authRoutes');
+  .catch((err) => {
+    console.error('Connection error:', err);
+  });
 
+const authRouter = require('./routes/authRoutes');
 
 app.use(cors());
 app.use(morgan("dev"));
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use("/api.software-project.in/api/user", authRouter);
 
-app.use("/api.software-project.in/api/user",authRouter);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Software project is listening on port ${process.env.PORT || 3000}`);
+});
