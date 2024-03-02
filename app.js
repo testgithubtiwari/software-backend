@@ -8,7 +8,7 @@ const cors = require("cors");
 
 dotenv.config();
 
-const uri = "mongodb+srv://admin:85%40Rt*56@software1.gptczdh.mongodb.net/softwaredb?retryWrites=true&w=majority&appName=software1";
+const uri = "mongodb+srv://admin:${process.env.MONGODB_PASS}@software1.gptczdh.mongodb.net/softwaredb?retryWrites=true&w=majority&appName=software1";
 mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
   .then(() => {
     console.log('Connection successful');
