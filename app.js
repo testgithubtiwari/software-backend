@@ -30,3 +30,7 @@ app.use("/api.software-project.in/api/user", authRouter);
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Software project is listening on port ${process.env.PORT || 3000}`);
 });
+
+app.get('/',(req,res)=>{
+  res.send( "Welcome to software Project API");
+})
