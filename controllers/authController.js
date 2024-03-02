@@ -95,63 +95,60 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
     try {
-        const userId = req.query.userId;
-        if (!userId) {
-            return res.status(404).json({ error: 'Provide the userId in query params' });
-        }
-        // Check for the presence of access token in the request headers
         const accessToken = req.query.accessToken;
         if (!accessToken) {
             return res.status(401).json({ error: 'Access token is missing' });
         }
-         // Verify the access token
-        const decodedaccessToken = verifyAccessToken(accessToken);
-        if (!decodedaccessToken) {
-            // Access token is invalid or expired, try using the refresh token
+
+        const decodedAccessToken = verifyAccessToken(accessToken);
+        if (!decodedAccessToken) {
             const refreshToken = req.query.refreshToken;
             if (!refreshToken) {
                 return res.status(401).json({ error: 'Access token is not valid! Please send refresh token' });
             }
             const decodedRefreshToken = verifyRefreshTokenFromBearer(refreshToken);
+            console.log(decodedRefreshToken);
+
             if (!decodedRefreshToken) {
                 return res.status(401).json({ error: 'Invalid refresh token' });
             }
 
-            // Check if both access and refresh tokens are expired
-            if (isTokenExpired(decodedaccessToken) && isTokenExpired(decodedRefreshToken)) {
+            if (isTokenExpired(decodedAccessToken) && isTokenExpired(decodedRefreshToken)) {
                 return res.status(401).json({ error: 'Both access and refresh tokens are expired. Please log in again.' });
             }
 
-            // Use the refresh token to generate a new access token
-            const newAccessToken = generateAccessToken(decodedRefreshToken.userId);
+            const newAccessToken = generateAccessToken(decodedRefreshToken.user.id);
+            // console.log(newAccessToken);
 
-            // Send the new access token in the response headers
             res.setHeader('Authorization', newAccessToken);
+            const userId1 = decodedRefreshToken?.user?.id; // Use optional chaining to handle null values
+            if (!userId1) {
+                return res.status(401).json({ error: 'User ID not found in refresh token' });
+            }
 
-            const user = await User.findById(userId);
-
+            const user = await User.findById(userId1);
             if (!user) {
                 return res.status(404).json({ error: 'User not found' });
             }
 
-        // You can customize the response based on your needs
             res.status(200).json({ user });
         }
 
-        // Fetch the specific user from the database using the user ID
-        const user = await User.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+        if(decodedAccessToken){
+            const userId = decodedAccessToken.user.id;
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+    
+            res.status(200).json({ user });
         }
-
-        // You can customize the response based on your needs
-        res.status(200).json({ user });
     } catch (error) {
         console.error('Error getting user:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
 function verifyAccessToken(accessToken) {
@@ -198,7 +195,11 @@ function isTokenExpired(decodedToken) {
 
 // Function to generate a new access token using the refresh token
 function generateAccessToken(userId) {
-    const accessToken = jwt.sign({ userId }, secretKey, { expiresIn: '5m' }); // Example: expires in 5min
+    const payload = {
+        user: { id: userId },
+        tokenType: 'access'
+    };
+    const accessToken = jwt.sign(payload, secretKey, { expiresIn: '5m' });
     return accessToken;
 }
 
