@@ -9,7 +9,6 @@ const cors = require("cors");
 dotenv.config();
 
 const uri = `mongodb+srv://admin:${process.env.MONGODB_PASS}@software1.gptczdh.mongodb.net/softwaredb?retryWrites=true&w=majority&appName=software1`;
-// console.log(uri);
 mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
   .then(() => {
     console.log('Connection successful');
@@ -19,6 +18,7 @@ mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
   });
 
 const authRouter = require('./routes/authRoutes');
+const designCreditRouter=require('./routes/designCreditRoutes');
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -26,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/software-project.in/user", authRouter);
+app.use("/software-project.in/design", designCreditRouter);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Software project is listening on port ${process.env.PORT || 3000}`);
