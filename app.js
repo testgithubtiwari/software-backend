@@ -19,6 +19,8 @@ mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
 
 const authRouter = require('./routes/authRoutes');
 const designCreditRouter=require('./routes/designCreditRoutes');
+const applyDesignCredit=require('./routes/applyDesignCreditRoutes');
+
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -27,11 +29,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/software-project.in/user", authRouter);
 app.use("/software-project.in/design", designCreditRouter);
+app.use("/software-project.in/application",applyDesignCredit);
+
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Software project is listening on port ${process.env.PORT || 3000}`);
 });
 
 app.get('/',(req,res)=>{
-  res.send( "Welcome to software Project API");
-})
+  res.json({message:"welcome to software api"});
+});
