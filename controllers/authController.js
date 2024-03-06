@@ -7,7 +7,7 @@ const secretKey = process.env.SECRET_KEY;
 const createUser = asyncHandler(
     async (req, res) => {
         try {
-            const { email, userType, rollNumber, branch, password } = req.body;
+            const {name, email, userType, rollNumber, branch, password } = req.body;
 
             if (!email || !userType || !password) {
                 return res.status(400).json({ error: 'Please provide all the required fields' });
@@ -27,6 +27,7 @@ const createUser = asyncHandler(
 
             // If the user doesn't exist and userType is "student", check for rollNumber and branch
             const newUser = await User.create({
+                name: name || "",
                 email,
                 userType,
                 branch: userType === "Student" ? branch : undefined,
@@ -42,6 +43,35 @@ const createUser = asyncHandler(
         }
     }
 );
+
+const isProfileCompleted = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        if (!userId) {
+            return res.sendStatus(400).json({ message: "Please provide the userId in the request body" });
+        }
+
+        // Fetch user details from the database
+        const user = await User.findById(userId);
+
+        // Check if user exists
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the user's profile is completed based on your criteria
+        const profileCompleted = !!user.name && !!user.email && !!user.userType;
+
+        // Respond with status 200 (OK) and send whether the profile is completed or not
+        res.status(200).json({ profileCompleted });
+    } catch (error) {
+        console.error('Error checking profile completion:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
 
 const LoginUser = asyncHandler(async (req, res) => {
     try {
@@ -203,9 +233,45 @@ function generateAccessToken(userId) {
     return accessToken;
 }
 
+const updateProfile = asyncHandler(async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const { name, email, userType, rollNumber, branch } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ message: "Please provide the userId in the request body" });
+        }
+
+        // Fetch user details from the database
+        let user = await User.findById(userId);
+
+        // Check if user exists
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Update user's profile information
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (userType) user.userType = userType;
+        if (rollNumber) user.rollNumber = rollNumber;
+        if (branch) user.branch = branch;
+        user.isProfileCompleted=true;
+
+        // Save the updated user object to the database
+        user = await user.save();
+
+        // Respond with status 200 (OK) and send the updated user profile
+        res.status(200).json({ message: 'User profile updated successfully', user });
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
-module.exports = { createUser,LoginUser,getAllUsers,getUser};
+
+module.exports = { createUser,LoginUser,getAllUsers,getUser,isProfileCompleted,updateProfile};
 
 
  
