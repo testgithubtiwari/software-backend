@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const applyDesignCreditSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', 
+        ref: 'User',
         required: true,
     },
     resumeLink: {
@@ -12,7 +12,7 @@ const applyDesignCreditSchema = new mongoose.Schema({
     },
     designCreditId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DesignCredits',  
+        ref: 'DesignCredits',
         required: true,
     }
 }, {

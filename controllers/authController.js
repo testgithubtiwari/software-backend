@@ -48,7 +48,7 @@ const isProfileCompleted = asyncHandler(async (req, res) => {
     try {
         const userId = req.body.userId;
         if (!userId) {
-            return res.sendStatus(400).json({ message: "Please provide the userId in the request body" });
+            return res.status(400).json({ message: "Please provide the userId in the request body" });
         }
 
         // Fetch user details from the database
@@ -62,14 +62,21 @@ const isProfileCompleted = asyncHandler(async (req, res) => {
         // Check if the user's profile is completed based on your criteria
         const profileCompleted = !!user.name && !!user.email && !!user.userType;
 
-        // Respond with status 200 (OK) and send whether the profile is completed or not
-        res.status(200).json({ profileCompleted });
+        // Prepare response object
+        const response = { profileCompleted };
+
+        // If profile is completed, include username in the response
+        if (profileCompleted) {
+            response.username = user.name;
+        }
+
+        // Respond with status 200 (OK) and send the response object
+        res.status(200).json(response);
     } catch (error) {
         console.error('Error checking profile completion:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 
 
