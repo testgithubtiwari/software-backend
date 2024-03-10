@@ -2,33 +2,45 @@ const ApplyDesignCredits = require('../models/applydesignCreditModel');
 const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 const validUrl = require('valid-url');
+const multer = require('multer');
+// const upload = multer({ dest: 'uploads/' });
+const uploadOnCloudinary=require('../utils/cloudinary');
 
 const addApplicationDesignCredit = asyncHandler(async (req, res) => {
     try {
         // Extract data from request body
-        const { userId, resumeLink, designCreditId } = req.body;
+        const { userId, designCreditId } = req.body;
+        console.log(req.file); 
 
         // Validate data
         if (!userId || !designCreditId) {
             return res.status(400).json({ message: "Please provide userId and designCreditId." });
         }
 
-        // Validate resumeLink format
-        if (resumeLink && !validUrl.isWebUri(resumeLink)) {
-            return res.status(400).json({ message: "Invalid resumeLink format. Please provide a valid URL." });
-        }
-
         // Check if the user has already applied for the same design credit
         const existingApplication = await ApplyDesignCredits.findOne({ userId, designCreditId });
 
         if (existingApplication) {
-            return res.status(400).json({ message: "User has already applied for this design credit." });
+            return res.status(403).json({ message: "User has already applied for this design credit." });
+        }
+
+        const resumeLocalPath = req.file.path;
+        console.log(resumeLocalPath);
+
+        if(!resumeLocalPath){
+            return res.status(400).json({message:"Resume file is not provided"});
+        }
+
+        const resume = await uploadOnCloudinary(resumeLocalPath);
+
+        if(!resume){
+            return res.status(400).json({message:"Resume not uploaded"});
         }
 
         // Create a new instance of the ApplyDesignCredits model
         const newApplicationDesignCredit = new ApplyDesignCredits({
             userId,
-            resumeLink,
+            resumeLink:resume.url,
             designCreditId
         });
 
@@ -109,5 +121,27 @@ const getAllApplicationofUser = asyncHandler(async (req, res) => {
     }
 });
 
+const getAllApplicationsDesignCredit=asyncHandler(async(req,res)=>{
+    try {
+        const designCreditId = req.query.id;
 
-module.exports = { addApplicationDesignCredit,getAllApplication,getSpecificApplication,getAllApplicationofUser };
+        // Check if userId is missing
+        if (!designCreditId) {
+            return res.status(400).json({ message: "Please provide a design-credit id." });
+        }
+
+        // Fetch all application design credits associated with the specified user id
+        const userApplications = await ApplyDesignCredits.find({ designCreditId })
+        .populate('userId', 'email rollNumber name');
+
+        // Respond with status 200 (OK) and send the user's application design credits in the response
+        res.status(200).json(userApplications);
+    } catch (error) {
+        // Handle any errors
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
+module.exports = { addApplicationDesignCredit,getAllApplication,getSpecificApplication,getAllApplicationofUser,getAllApplicationsDesignCredit };

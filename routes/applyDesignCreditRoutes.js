@@ -1,11 +1,12 @@
 const express=require('express');
-const { addApplicationDesignCredit, getAllApplication, getSpecificApplication, getAllApplicationofUser } = require('../controllers/applydesignCreditsController');
-
+const { addApplicationDesignCredit, getAllApplication, getSpecificApplication, getAllApplicationofUser, getAllApplicationsDesignCredit } = require('../controllers/applydesignCreditsController');
+const upload=require('../middlewares/multer.middleware');
 
 const router=express.Router();
-router.post('/apply-design-credit',addApplicationDesignCredit);
+router.post('/apply-design-credit',upload.single('resumeLink'),addApplicationDesignCredit);
 router.get('/get-all-applications',getAllApplication);
 router.get('/get-application',getSpecificApplication);
 router.get('/get-application-user',getAllApplicationofUser);
+router.get('/get-application-design-credit',getAllApplicationsDesignCredit);
 
 module.exports=router;
