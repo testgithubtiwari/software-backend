@@ -25,4 +25,4 @@ jobs:
             - name: Pull image from docker hub
               run:  sudo docker pull ritik819/softwarebackend:latest
             - name: Run Docker container
-              run: docker run -d -p 5000:5000 --name software-backend-container -e MONGODB_PASS='85@Rt*56' ritik819/softwarebackend:latest
+              run:  sudo docker run -d -p 5000:5000 --name software-backend-container -e MONGODB_PASS='85@Rt*56' ritik819/softwarebackend:latest
