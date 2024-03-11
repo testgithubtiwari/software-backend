@@ -3,23 +3,13 @@ const asyncHandler = require('express-async-handler');
 const mongoose = require('mongoose');
 const validUrl = require('valid-url');
 const multer = require('multer');
-// const upload = multer({ dest: 'uploads/' });
 const uploadOnCloudinary=require('../utils/cloudinary');
-
-
-// const getLink=asyncHandler(async(req,res)=>{
-//     if (!req.file) {
-//         return res.status(400).send('No file uploaded.');
-//       }
-//       const publicUrl = `${req.protocol}://${req.get('host')}/${req.file.path}`;
-//       res.json({ publicUrl });
-// });
 
 const addApplicationDesignCredit = asyncHandler(async (req, res) => {
     try {
-        // Extract data from request body
+        
         const { userId, designCreditId,resumeLink } = req.body;
-        // Validate data
+        
         if (!userId || !designCreditId || !resumeLink) {
             return res.status(400).json({ message: "Any of the userId, DesignCreditId or resumeLink is missing" });
         }

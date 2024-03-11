@@ -8,6 +8,4 @@ router.get('/get-all-applications',getAllApplication);
 router.get('/get-application',getSpecificApplication);
 router.get('/get-application-user',getAllApplicationofUser);
 router.get('/get-application-design-credit',getAllApplicationsDesignCredit);
-// router.post('/get-link',upload.single('file'),getLink);
-
 module.exports=router;
