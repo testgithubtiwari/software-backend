@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require("cors");
+const multer = require('multer');
+const path = require('path');
 
 dotenv.config();
 
@@ -30,6 +32,33 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/software-project.in/user", authRouter);
 app.use("/software-project.in/design", designCreditRouter);
 app.use("/software-project.in/application",applyDesignCredit);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Upload files to the 'uploads' directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // Rename file with current timestamp
+  },
+});
+const upload = multer({ storage });
+
+// Define a route for file uploads
+app.post('/software-project.in/application/get-link', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  // Construct public URL for the uploaded file
+  const publicUrl = `${req.protocol}://${req.get('host')}/${req.file.path}`;
+  console.log(publicUrl);
+
+  // Send the public URL as a response
+  res.json({ publicUrl });
+});
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.listen(process.env.PORT || 3000, () => {

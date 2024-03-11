@@ -6,15 +6,22 @@ const multer = require('multer');
 // const upload = multer({ dest: 'uploads/' });
 const uploadOnCloudinary=require('../utils/cloudinary');
 
+
+// const getLink=asyncHandler(async(req,res)=>{
+//     if (!req.file) {
+//         return res.status(400).send('No file uploaded.');
+//       }
+//       const publicUrl = `${req.protocol}://${req.get('host')}/${req.file.path}`;
+//       res.json({ publicUrl });
+// });
+
 const addApplicationDesignCredit = asyncHandler(async (req, res) => {
     try {
         // Extract data from request body
-        const { userId, designCreditId } = req.body;
-        console.log(req.file); 
-
+        const { userId, designCreditId,resumeLink } = req.body;
         // Validate data
-        if (!userId || !designCreditId) {
-            return res.status(400).json({ message: "Please provide userId and designCreditId." });
+        if (!userId || !designCreditId || !resumeLink) {
+            return res.status(400).json({ message: "Any of the userId, DesignCreditId or resumeLink is missing" });
         }
 
         // Check if the user has already applied for the same design credit
@@ -24,23 +31,11 @@ const addApplicationDesignCredit = asyncHandler(async (req, res) => {
             return res.status(403).json({ message: "User has already applied for this design credit." });
         }
 
-        const resumeLocalPath = req.file.path;
-        console.log(resumeLocalPath);
-
-        if(!resumeLocalPath){
-            return res.status(400).json({message:"Resume file is not provided"});
-        }
-
-        const resume = await uploadOnCloudinary(resumeLocalPath);
-
-        if(!resume){
-            return res.status(400).json({message:"Resume not uploaded"});
-        }
-
+        
         // Create a new instance of the ApplyDesignCredits model
         const newApplicationDesignCredit = new ApplyDesignCredits({
             userId,
-            resumeLink:resume.url,
+            resumeLink,
             designCreditId
         });
 
@@ -144,4 +139,4 @@ const getAllApplicationsDesignCredit=asyncHandler(async(req,res)=>{
 });
 
 
-module.exports = { addApplicationDesignCredit,getAllApplication,getSpecificApplication,getAllApplicationofUser,getAllApplicationsDesignCredit };
+module.exports = { addApplicationDesignCredit,getAllApplication,getSpecificApplication,getAllApplicationofUser,getAllApplicationsDesignCredit};
