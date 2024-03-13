@@ -3,6 +3,7 @@ const asyncHandler=require('express-async-handler');
 const generateToken=require('../config/jwtToken');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const axios = require('axios');
 const secretKey = process.env.SECRET_KEY;
 const createUser = asyncHandler(
     async (req, res) => {
@@ -278,7 +279,32 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { createUser,LoginUser,getAllUsers,getUser,isProfileCompleted,updateProfile};
+const sendotp = asyncHandler(async (req, res) => {
+    try {
+      const { mobileNumber } = req.body; // Extract mobileNumber from request body
+      if (!mobileNumber) {
+        return res.status(400).json({ success: false, message: 'Mobile number is required.' });
+      }
+      
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const response = await axios.get('https://www.fast2sms.com/dev/bulk', {
+        params: {
+          authorization: process.env.FAST2SMS_API_KEY,
+          variables_values: `Your OTP is ${otp}`,
+          route: 'otp',
+          numbers: mobileNumber
+        }
+      });
+      res.json({ success: true, message: 'OTP sent successfully!' });
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      res.status(500).json({ success: false, message: 'Failed to send OTP.' });
+    }
+  });
+
+
+
+module.exports = { createUser,LoginUser,getAllUsers,getUser,isProfileCompleted,updateProfile,sendotp};
 
 
  
