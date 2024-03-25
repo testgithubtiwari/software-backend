@@ -7,7 +7,6 @@ const morgan = require('morgan');
 const cors = require("cors");
 const multer = require('multer');
 const path = require('path');
-
 dotenv.config();
 
 const uri = `mongodb+srv://admin:${process.env.MONGODB_PASS}@software1.gptczdh.mongodb.net/softwaredb?retryWrites=true&w=majority&appName=software1`;
@@ -22,6 +21,7 @@ mongoose.connect(uri, { useNewUrlParser: true,  useUnifiedTopology: true  })
 const authRouter = require('./routes/authRoutes');
 const designCreditRouter=require('./routes/designCreditRoutes');
 const applyDesignCredit=require('./routes/applyDesignCreditRoutes');
+const pushnotificationRoutes=require('./routes/pushNotoficationRoutes');
 
 
 app.use(cors());
@@ -32,6 +32,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/software-project.in/user", authRouter);
 app.use("/software-project.in/design", designCreditRouter);
 app.use("/software-project.in/application",applyDesignCredit);
+app.use("/software-project.in/notification",pushnotificationRoutes);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
