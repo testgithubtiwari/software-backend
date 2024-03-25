@@ -4,7 +4,6 @@ const generateToken=require('../config/jwtToken');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const axios = require('axios');
-const fast2sms=require('fast2sms');
 const secretKey = process.env.SECRET_KEY;
 const createUser = asyncHandler(
     async (req, res) => {
@@ -281,9 +280,8 @@ const updateProfile = asyncHandler(async (req, res) => {
 
 
 const sendotp = asyncHandler(async (req, res) => {
-    const apikey= process.env.FAST2SMS_API_KEY;
     try {
-      const { mobileNumber } = req.body;  
+      const { mobileNumber } = req.body; // Extract mobileNumber from request body
       if (!mobileNumber) {
         return res.status(400).json({ success: false, message: 'Mobile number is required.' });
       }
@@ -291,7 +289,7 @@ const sendotp = asyncHandler(async (req, res) => {
       const otp = Math.floor(100000 + Math.random() * 900000);
       const response = await axios.get('https://www.fast2sms.com/dev/bulk', {
         params: {
-          authorization: apikey,
+          authorization: process.env.FAST2SMS_API_KEY,
           variables_values: `Your OTP is ${otp}`,
           route: 'otp',
           numbers: mobileNumber

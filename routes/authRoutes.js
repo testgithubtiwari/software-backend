@@ -8,5 +8,5 @@ router.get("/allUsers",getAllUsers);
 router.get('/user',getUser);
 router.post('/isProfileCompleted',isProfileCompleted);
 router.post('/update-profile',updateProfile);
-router.get('/send-otp',sendotp);
+router.post('/send-otp',sendotp);
 module.exports=router;
