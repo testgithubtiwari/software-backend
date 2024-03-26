@@ -34,5 +34,7 @@ jobs:
                             -e MONGODB_PASS='${{secrets.MONGODBB_PASSWORD}}' \
                             -e PORT='${{secrets.PORT}}' \
                             -e SECRET_KEY='${{secrets.SECRET_KEY}}' \
+                            -e ADMIN_EMAIL='${{secrets.ADMIN_EMAIL}}' \
+                            -e ADMIN_PASSWORD='${{secrets.ADMIN_PASSWORD}}' \
                             ritik819/softwarebackend:latest
 
