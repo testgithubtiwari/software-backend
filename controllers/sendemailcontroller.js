@@ -29,7 +29,7 @@ const sendemail = (req, res) => {
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
-            res.status(500).send({ success: false, message: 'Failed to send email' });
+            res.status(500).send({ success: false, message: 'Failed to send email', error: error });
         } else {
             console.log('Email sent: ' + info.response);
             res.status(200).send({ success: true, message: 'Email sent successfully' });
