@@ -12,9 +12,9 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendemail = (req, res) => {
-    const {from, to, subject, text ,attachments} = req.body;
+    const {from, to, subject,html} = req.body;
 
-    if(!from || !to || !subject || !text || !attachments){
+    if(!from || !to || !subject || !html){
         return res.status(400).json({ error: 'Please provide all the required fields' });
     }
 
@@ -22,8 +22,7 @@ const sendemail = (req, res) => {
         from: from,
         to: to,
         subject: subject,
-        text: text,
-        attachments: attachments  
+        html: html,  
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
