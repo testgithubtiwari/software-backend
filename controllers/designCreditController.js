@@ -13,7 +13,7 @@ const addDesignCredit = asyncHandler(async (req, res) => {
 
         // Check if all required fields are present in the request body
         const { projectName, eligibleBranches, professorName, offeredBy, description } = req.body;
-        if (!projectName || !eligibleBranches || !professorName || !offeredBy || !description) {
+        if (!projectName || !eligibleBranches || !professorName || !offeredBy || !description  ) {
             return res.status(400).json({ message: "Please provide all required fields: projectName, eligibleBranches, professorName, offeredBy, description." });
         }
 
@@ -23,7 +23,8 @@ const addDesignCredit = asyncHandler(async (req, res) => {
             eligibleBranches,
             professorName,
             offeredBy,
-            description
+            description,
+           
         });
 
         // Save the new design credit to the database
@@ -41,13 +42,10 @@ const addDesignCredit = asyncHandler(async (req, res) => {
 
 const getAllDesignCredits = asyncHandler(async (req, res) => {
     try {
-        // Retrieve all design credits from the database
         const designCredits = await DesignCredit.find();
-
-        // Respond with status 200 (OK) and send the design credits in the response
+         
         res.status(200).json(designCredits);
     } catch (error) {
-        // Handle any errors
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
