@@ -1,40 +1,39 @@
 name: Deploy Software-Bckend
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    build: 
-        runs-on: ubuntu-latest
-        steps: 
-            - name: Checkout Source
-              uses: actions/checkout@v4
-            - name: Login to docker hub
-              run:  docker login -u ritik819 -p '${{secrets.DOCKER_PASSWORD}}'
-            - name: Build Docker Image
-              run: docker build -t  ritik819/softwarebackend .
-            - name: Publish Image to docker hub
-              run: docker push ritik819/softwarebackend:latest
-    
-    deploy: 
-                needs: build
-                runs-on: self-hosted 
-                steps: 
-                    - name: Pull image from docker hub
-                      run: sudo docker pull ritik819/softwarebackend:latest
-                    - name: Stop and remove existing container (if exists)
-                      run: |
-                        sudo docker stop software-backend-container || true
-                        sudo docker rm software-backend-container || true
-                    - name: Run Docker container
-                      run: |
-                        sudo docker run -d -p 5000:5000 --name software-backend-container \
-                            -e MONGODB_PASS='${{secrets.MONGODBB_PASSWORD}}' \
-                            -e PORT='${{secrets.PORT}}' \
-                            -e SECRET_KEY='${{secrets.SECRET_KEY}}' \
-                            -e ADMIN_EMAIL='${{secrets.ADMIN_EMAIL}}' \
-                            -e ADMIN_PASSWORD='${{secrets.ADMIN_PASSWORD}}' \
-                            ritik819/softwarebackend:latest
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Login to docker hub
+        run: docker login -u ritik819 -p '${{secrets.DOCKER_PASSWORD}}'
+      - name: Build Docker Image
+        run: docker build -t  ritik819/softwarebackend .
+      - name: Publish Image to docker hub
+        run: docker push ritik819/softwarebackend:latest
 
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image from docker hub
+        run: sudo docker pull ritik819/softwarebackend:latest
+      - name: Stop and remove existing container (if exists)
+        run: |
+          sudo docker stop software-backend-container || true
+          sudo docker rm software-backend-container || true
+      - name: Run Docker container
+        run: |
+          sudo docker run -d -p 5000:5000 --name software-backend-container \
+              -e MONGODB_PASS='${{secrets.MONGODBB_PASSWORD}}' \
+              -e PORT='${{secrets.PORT}}' \
+              -e SECRET_KEY='${{secrets.SECRET_KEY}}' \
+              -e ADMIN_EMAIL='${{secrets.ADMIN_EMAIL}}' \
+              -e ADMIN_PASSWORD='${{secrets.ADMIN_PASSWORD}}' \
+              ritik819/softwarebackend:latest
