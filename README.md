@@ -34,7 +34,7 @@ npm start
 
 This will start the server in the localhost  and the defined port in .env file.
 
-You can access in the browser by http://localhost:<port>
+You can access in the browser by http://13.201.24.145:5000/
 
 ## Contributing
 
