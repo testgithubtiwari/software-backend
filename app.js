@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+const { swaggerUi, specs } = require("./config/swaggerconfig");
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/software-project.in/user", authRouter);
 app.use("/software-project.in/design", designCreditRouter);
 app.use("/software-project.in/application", applyDesignCredit);

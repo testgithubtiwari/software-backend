@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const secretKey = process.env.SECRET_KEY;
+
 const createUser = asyncHandler(async (req, res) => {
   try {
     const { name, email, userType, rollNumber, branch, password } = req.body;
@@ -26,11 +27,9 @@ const createUser = asyncHandler(async (req, res) => {
 
     // Check if userType is "student" and if rollNumber and branch are provided
     if (userType === "Student" && (!rollNumber || !branch)) {
-      return res
-        .status(400)
-        .json({
-          error: "Please provide rollNumber and branch for student users",
-        });
+      return res.status(400).json({
+        error: "Please provide rollNumber and branch for student users",
+      });
     }
 
     // If the user doesn't exist and userType is "student", check for rollNumber and branch
@@ -149,11 +148,9 @@ const getUser = asyncHandler(async (req, res) => {
     if (!decodedAccessToken) {
       const refreshToken = req.query.refreshToken;
       if (!refreshToken) {
-        return res
-          .status(401)
-          .json({
-            error: "Access token is not valid! Please send refresh token",
-          });
+        return res.status(401).json({
+          error: "Access token is not valid! Please send refresh token",
+        });
       }
       const decodedRefreshToken = verifyRefreshTokenFromBearer(refreshToken);
       console.log(decodedRefreshToken);
@@ -166,12 +163,10 @@ const getUser = asyncHandler(async (req, res) => {
         isTokenExpired(decodedAccessToken) &&
         isTokenExpired(decodedRefreshToken)
       ) {
-        return res
-          .status(401)
-          .json({
-            error:
-              "Both access and refresh tokens are expired. Please log in again.",
-          });
+        return res.status(401).json({
+          error:
+            "Both access and refresh tokens are expired. Please log in again.",
+        });
       }
 
       const newAccessToken = generateAccessToken(decodedRefreshToken.user.id);
@@ -300,31 +295,6 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
-const sendotp = asyncHandler(async (req, res) => {
-  try {
-    const { mobileNumber } = req.body; // Extract mobileNumber from request body
-    if (!mobileNumber) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Mobile number is required." });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    const response = await axios.get("https://www.fast2sms.com/dev/bulk", {
-      params: {
-        authorization: process.env.FAST2SMS_API_KEY,
-        variables_values: `Your OTP is ${otp}`,
-        route: "otp",
-        numbers: mobileNumber,
-      },
-    });
-    res.json({ success: true, message: "OTP sent successfully!" });
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    res.status(500).json({ success: false, message: "Failed to send OTP." });
-  }
-});
-
 module.exports = {
   createUser,
   LoginUser,
@@ -332,5 +302,4 @@ module.exports = {
   getUser,
   isProfileCompleted,
   updateProfile,
-  sendotp,
 };
