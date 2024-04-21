@@ -7,43 +7,42 @@ const addDesignCredit = asyncHandler(async (req, res) => {
     // console.log(req.headers);
     // Check if the user is a Professor
     if (req.headers.usertype !== "Professor") {
-      return res
-        .status(403)
-        .json({
-          message: "Only Professors are allowed to add design credits.",
-        });
+      return res.status(403).json({
+        message: "Only Professors are allowed to add design credits.",
+      });
     }
 
     // Check if all required fields are present in the request body
     const {
       projectName,
       eligibleBranches,
-      professorName,
+      userId,
       offeredBy,
       description,
+      professorName,
     } = req.body;
     if (
       !projectName ||
       !eligibleBranches ||
-      !professorName ||
+      !userId ||
       !offeredBy ||
-      !description
+      !description ||
+      !professorName
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Please provide all required fields: projectName, eligibleBranches, professorName, offeredBy, description.",
-        });
+      return res.status(400).json({
+        message:
+          "Please provide all required fields: projectName, eligibleBranches, professorName, offeredBy, description and professorId",
+      });
     }
 
     // Create a new instance of the DesignCredit model with the request body data
     const newDesignCredit = new DesignCredit({
       projectName,
       eligibleBranches,
-      professorName,
+      userId,
       offeredBy,
       description,
+      professorName,
     });
 
     // Save the new design credit to the database
@@ -60,7 +59,10 @@ const addDesignCredit = asyncHandler(async (req, res) => {
 
 const getAllDesignCredits = asyncHandler(async (req, res) => {
   try {
-    const designCredits = await DesignCredit.find();
+    const designCredits = await DesignCredit.find().populate(
+      "userId",
+      "email rollNumber name"
+    );
 
     res.status(200).json(designCredits);
   } catch (error) {
@@ -121,7 +123,10 @@ const filterDesignCredit = asyncHandler(async (req, res) => {
     }
 
     // Find design credits matching the query
-    const designCredits = await DesignCredit.find(query);
+    const designCredits = await DesignCredit.find(query).populate(
+      "userId",
+      "email name"
+    );
 
     // Respond with status 200 (OK) and send the filtered design credits in the response
     res.status(200).json(designCredits);

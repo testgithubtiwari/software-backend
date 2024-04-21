@@ -10,6 +10,11 @@ const DesignCreditSchema = new mongoose.Schema(
       type: Array,
       default: ["All"],
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     professorName: {
       type: String,
       required: true,

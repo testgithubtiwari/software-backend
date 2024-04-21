@@ -6,7 +6,9 @@ const {
   getUser,
   isProfileCompleted,
   updateProfile,
+
   sendotp,
+  // deleteAllUser,
 } = require("../controllers/authController");
 const router = express.Router();
 
@@ -116,4 +118,5 @@ router.get("/allUsers", getAllUsers);
 router.get("/user", getUser);
 router.post("/isProfileCompleted", isProfileCompleted);
 router.post("/update-profile", updateProfile);
+// router.get("/delete-all-user", deleteAllUser);
 module.exports = router;

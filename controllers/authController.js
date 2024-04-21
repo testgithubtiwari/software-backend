@@ -295,6 +295,22 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// delete all the user from the database
+
+// const deleteAllUser = asyncHandler(async (req, res) => {
+//   const { User } = require("../models/userModel");
+
+//   // Delete all users
+//   await User.destroy({
+//     where: {},
+//     truncate: true,
+//   });
+
+//   res
+//     .status(200)
+//     .json({ success: true, message: "All users deleted successfully" });
+// });
+
 module.exports = {
   createUser,
   LoginUser,
@@ -302,4 +318,5 @@ module.exports = {
   getUser,
   isProfileCompleted,
   updateProfile,
+  // deleteAllUser,
 };
