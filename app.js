@@ -25,6 +25,7 @@ const authRouter = require("./routes/authRoutes");
 const designCreditRouter = require("./routes/designCreditRoutes");
 const applyDesignCredit = require("./routes/applyDesignCreditRoutes");
 const emailRouter = require("./routes/sendemailroutes");
+const resultRouter = require("./routes/resultsRoutes");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -36,6 +37,7 @@ app.use("/software-project.in/user", authRouter);
 app.use("/software-project.in/design", designCreditRouter);
 app.use("/software-project.in/application", applyDesignCredit);
 app.use("/software-project.in/email", emailRouter);
+app.use("/software-project.in/results", resultRouter);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
