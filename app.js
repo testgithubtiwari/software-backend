@@ -77,7 +77,7 @@ app.listen(process.env.PORT || 3000, () => {
 });
 
 app.get("/", (req, res) => {
-  res.json({ message: "welcome to software api again" });
+  res.json({ message: "welcome to software api" });
 });
 app.get("/api", (req, res) => {
   res.json({ message: "Here is the list of api" });
