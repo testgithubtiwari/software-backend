@@ -29,8 +29,20 @@ Now run to install all the dependecnies to run the server
 npm i
 ```
 
-Now you can confirm that all dependencies are installed or not in package.json files.
-There are enviroment variables also you have to configure by yourself. Like in the app.js file there are enviroment variables used and also there are mongodb password required which you have to yours.
+##### Now you can confirm that all dependencies are installed or not in package.json files.There are enviroment variables also you have to configure by yourself. Like in the app.js file there are enviroment variables used and also there are mongodb password required which you have to yours.
+
+#### Here is the .env looks like
+
+```
+PORT=<your port >
+MONGODB_PASS=< your mongodb pass >
+SECRET_KEY=< any secret key >
+CLOUDINARY_CLOUD_NAME=< your cloudinary folder name >
+CLOUDINARY_CLOUD_KEY=< your cloudinary key >
+CLOUDINARY_CLOUD_SECRET=< your cloudinary secret key >
+ADMIN_EMAIL=< your email id >
+ADMIN_PASSWORD=< your email key password>
+```
 
 Finally run the command
 
